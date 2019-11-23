@@ -1,7 +1,6 @@
 {
   "configurations" : [
     {
-      "id" : "12D16962-D808-4F96-AF5E-9E4BCA4896F8",
       "name" : "Foundation",
       "options" : {
 
@@ -9,12 +8,7 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
-    "targetForVariableExpansion" : {
-      "containerPath" : "container:WordPress.xcodeproj",
-      "identifier" : "1D6058900D05DD3D006BFB54",
-      "name" : "WordPress"
-    }
+
   },
   "testTargets" : [
     {

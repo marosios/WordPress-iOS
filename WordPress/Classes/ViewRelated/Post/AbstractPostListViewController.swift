@@ -29,7 +29,7 @@ fileprivate func > <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
 }
 
 
-class AbstractPostListViewController: UIViewController,
+public class AbstractPostListViewController: UIViewController,
     WPContentSyncHelperDelegate,
     UISearchControllerDelegate,
     UISearchResultsUpdating,
@@ -74,7 +74,7 @@ class AbstractPostListViewController: UIViewController,
 
     @objc var tableView: UITableView {
         get {
-            return self.tableViewController.tableView
+            return self.tableViewController?.tableView ?? UITableView()
         }
     }
 
@@ -145,7 +145,7 @@ class AbstractPostListViewController: UIViewController,
 
     // MARK: - Lifecycle
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
@@ -167,7 +167,7 @@ class AbstractPostListViewController: UIViewController,
         observeNetworkStatus()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         startGhost()
@@ -197,13 +197,13 @@ class AbstractPostListViewController: UIViewController,
         return view.convert(keyboardFrame, from: nil)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         automaticallySyncIfAppropriate()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         if searchController.isActive {
@@ -221,7 +221,7 @@ class AbstractPostListViewController: UIViewController,
         return type(of: self).defaultHeightForFooterView
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 
@@ -389,6 +389,10 @@ class AbstractPostListViewController: UIViewController,
         postListFooterView.isHidden = false
         noResultsViewController.removeFromView()
     }
+    
+    func setAtLeastSyncedOnce(bool: Bool) {
+        atLeastSyncedOnce = bool
+    }
 
     func showNoResultsView() {
 
@@ -396,12 +400,12 @@ class AbstractPostListViewController: UIViewController,
             return
         }
 
-        postListFooterView.isHidden = true
+        postListFooterView?.isHidden = true
         refreshNoResultsViewController(noResultsViewController)
 
         // Only add no results view if it isn't already in the table view
         if noResultsViewController.view.isDescendant(of: tableView) == false {
-            tableViewController.addChild(noResultsViewController)
+            tableViewController?.addChild(noResultsViewController)
             tableView.addSubview(withFadeAnimation: noResultsViewController.view)
             noResultsViewController.view.frame = tableView.frame
 
@@ -438,11 +442,11 @@ class AbstractPostListViewController: UIViewController,
         fatalError("You should implement this method in the subclass")
     }
 
-    func managedObjectContext() -> NSManagedObjectContext {
+    public func managedObjectContext() -> NSManagedObjectContext {
         return ContextManager.sharedInstance().mainContext
     }
 
-    func fetchRequest() -> NSFetchRequest<NSFetchRequestResult> {
+    public func fetchRequest() -> NSFetchRequest<NSFetchRequestResult> {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName())
         fetchRequest.predicate = predicateForFetchRequest()
         fetchRequest.sortDescriptors = sortDescriptorsForFetchRequest()
@@ -532,7 +536,7 @@ class AbstractPostListViewController: UIViewController,
         return UITableView.automaticDimension
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         assert(false, "You should implement this method in the subclass")
     }
 
@@ -561,7 +565,7 @@ class AbstractPostListViewController: UIViewController,
         }
     }
 
-    func configureCell(_ cell: UITableViewCell, at indexPath: IndexPath) {
+    public func configureCell(_ cell: UITableViewCell, at indexPath: IndexPath) {
         assert(false, "You should implement this method in the subclass")
     }
 
@@ -1140,7 +1144,7 @@ class AbstractPostListViewController: UIViewController,
         configureInitialScrollInsets()
     }
 
-    func updateSearchResults(for searchController: UISearchController) {
+    public func updateSearchResults(for searchController: UISearchController) {
         resetTableViewContentOffset()
         searchHelper.searchUpdated(searchController.searchBar.text)
     }
@@ -1157,7 +1161,7 @@ class AbstractPostListViewController: UIViewController,
 
     // MARK: - Others
 
-    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+    override public func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         // We override this method to dismiss any Notice that is currently being shown. If we
         // don't do this, the present Notice will be shown on top of the ViewController we are
         // presenting.

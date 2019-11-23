@@ -312,12 +312,10 @@ DEPENDENCIES:
   - ZIPFoundation (~> 0.9.8)
 
 SPEC REPOS:
-  trunk:
+  https://cdn.cocoapods.org/:
     - 1PasswordExtension
-    - Alamofire
     - AlamofireNetworkActivityIndicator
     - Automattic-Tracks-iOS
-    - boost-for-react-native
     - Charts
     - CocoaLumberjack
     - DoubleConversion
@@ -326,7 +324,6 @@ SPEC REPOS:
     - Gifu
     - GoogleSignIn
     - GoogleToolboxForMac
-    - Gridicons
     - GTMSessionFetcher
     - HockeySDK
     - JTAppleCalendar
@@ -337,7 +334,6 @@ SPEC REPOS:
     - "NSURL+IDN"
     - OCMock
     - OHHTTPStubs
-    - Reachability
     - Sentry
     - SimulatorStatusMagic
     - Starscream
@@ -353,6 +349,13 @@ SPEC REPOS:
     - WPMediaPicker
     - wpxmlrpc
     - ZIPFoundation
+  https://github.com/CocoaPods/Specs.git:
+    - Alamofire
+    - boost-for-react-native
+    - CocoaLumberjack
+    - GoogleToolboxForMac
+    - Gridicons
+    - Reachability
 
 EXTERNAL SOURCES:
   Folly:
