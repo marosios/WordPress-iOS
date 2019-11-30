@@ -18,6 +18,90 @@ class ESSTests: XCTestCase {
         controller = AbstractPostListViewController()
     }
     
+    func testShowNoResultsView() {
+        controller?.refreshNoResultsViewController = { refreshVC in
+            print("Refreshing...")
+        }
+        // found a bug = when postListFooterView is not loaded yet, the app crashes
+        controller?.setAtLeastSyncedOnce(bool: true)
+        controller?.showNoResultsView()
+    }
+    
+    func testShowNoResultsViewNoRefreshed() {
+        controller?.refreshNoResultsViewController = { refreshVC in
+            print("Refreshing...")
+        }
+        controller?.showNoResultsView()
+    }
+    
+    func testGenerateTitle() {
+        let post = PostBuilder().with(pathForDisplayImage: "https://wp.me/awesome.png").build()
+        let title = "This is the test title from which the keywords should be generated."
+        let generatedTitle = post.generateTitle(from: title)
+        XCTAssertEqual(title, generatedTitle)
+    }
+    
+    func testGenerateTitleWithStatus() {
+        let post = PostBuilder().with(pathForDisplayImage: "https://wp.me/awesome.png").build()
+        let title = "This is the test title from which the keywords should be generated."
+        post.status = .scheduled
+        let titleWithStatus = "[Scheduled] \(title)"
+        let generatedTitleWithStatus = post.generateTitle(from: title)
+        XCTAssertEqual(titleWithStatus, generatedTitleWithStatus)
+    }
+    
+    func testSearchDomain() {
+        let post = PostBuilder().with(pathForDisplayImage: "https://wp.me/awesome.png").build()
+        let blog = Blog()
+        blog.url = "https://example.com"
+        blog.xmlrpc = "https://example.com/xmlrpc.php"
+        post.blog = blog
+        XCTAssertEqual(post.searchDomain, "https://example.com/xmlrpc.php")
+    }
+    
+    func testIsLocalRevision() {
+        let post = PostBuilder().with(pathForDisplayImage: "https://wp.me/awesome.png").build()
+        let isLocalRevision = post.isLocalRevision
+        XCTAssertEqual(isLocalRevision, false)
+    }
+    
+    func testRangeContainsRange() {
+        var range = NSRange(location: 0, length: 10)
+        var rangeToCompare = NSRange(location: 3, length: 4)
+        XCTAssertEqual(range.contains(rangeToCompare), true)
+        
+        range = NSRange(location: 0, length: 10)
+        rangeToCompare = NSRange(location: 5, length: 10)
+        XCTAssertEqual(range.contains(rangeToCompare), false)
+    }
+    
+    func testRangeIntersect() {
+        let range = NSRange(location: 5, length: 100)
+        
+        var rangeToCompare = NSRange(location: 6, length: 10)
+        XCTAssertEqual(range.intersect(withRange: rangeToCompare), rangeToCompare)
+        
+        rangeToCompare = NSRange(location: 4, length: 100)
+        XCTAssertEqual(range.intersect(withRange: rangeToCompare), NSRange(location: 5, length: 99))
+        
+        rangeToCompare = NSRange(location: 5, length: 101)
+        XCTAssertEqual(range.intersect(withRange: rangeToCompare), NSRange(location: 5, length: 100))
+        
+        rangeToCompare = NSRange(location: 4, length: 102)
+        XCTAssertEqual(range.intersect(withRange: rangeToCompare), range)
+        
+        rangeToCompare = NSRange(location: 1000, length: 10)
+        XCTAssertEqual(range.intersect(withRange: rangeToCompare), nil)
+    }
+    
+    func testRangeExtendedRight() {
+        let range = NSRange(location: 5, length: 100)
+        let extendedRange = NSRange(location: 5, length: 110)
+        XCTAssertEqual(range.extendedRight(by: 10), extendedRange)
+    }
+    
+//    ==========================================
+    
     func testFeaturedImageURLForDisplay() {
         let post = PostBuilder().with(pathForDisplayImage: "https://wp.me/awesome.png").build()
 
@@ -38,16 +122,6 @@ class ESSTests: XCTestCase {
         let titleKeywords = ["This", "is", "the", "test", "title", "from", "which", "the", "keywords", "should", "be", "generated."]
         let generatedTitleKeywords = post.generateKeywordsFromContent()
         XCTAssertEqual(titleKeywords, generatedTitleKeywords)
-    }
-    
-    func testRangeContainsRange() {
-        var range = NSRange(location: 0, length: 10)
-        var rangeToCompare = NSRange(location: 3, length: 4)
-        XCTAssertEqual(range.contains(rangeToCompare), true)
-        
-        range = NSRange(location: 0, length: 10)
-        rangeToCompare = NSRange(location: 5, length: 10)
-        XCTAssertEqual(range.contains(rangeToCompare), false)
     }
     
     func testRangeContainsOffet() {
